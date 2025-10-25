@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jakadwangdu - Portfolio</title>
+    <link rel="icon" type="image/x-icon" href="./logo.jpg">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1b69 100%);
+            color: white;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(45, 27, 105, 0.98));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1.2rem 0;
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid rgba(168, 85, 247, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        nav.scrolled {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.99), rgba(45, 27, 105, 0.99));
+            padding: 0.8rem 0;
+            box-shadow: 0 12px 40px rgba(168, 85, 247, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #a855f7;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -15px;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(45deg, #a855f7, #6d28d9);
+            border-radius: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover::before {
+            opacity: 1;
+            left: -20px;
+            animation: pulse 2s infinite;
+        }
+
+        .logo:hover {
+            color: #c084fc;
+            transform: scale(1.05);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .nav-links li {
+            position: relative;
+        }
+
+        .nav-links a {
+            color: #e5e7eb;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #a855f7, #c084fc);
+            border-radius: 1px;
+            transform: translateX(-50%);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.2);
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover::after {
+            width: 80%;
+        }
+
+        .nav-links a.active {
+            color: #ffffff;
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+        }
+
+        .nav-links a.active::after {
+            width: 80%;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        .mobile-menu-btn span {
+            width: 25px;
+            height: 3px;
+            background: #a855f7;
+            margin: 3px 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
+        }
+
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(45, 27, 105, 0.98));
+            backdrop-filter: blur(20px);
+            padding: 6rem 2rem 2rem;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .mobile-nav-links a {
+            color: #e5e7eb;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 500;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 200px;
+        }
+
+        .mobile-nav-links a:hover {
+            color: #ffffff;
+            background: rgba(168, 85, 247, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle at 30% 50%, #6d28d9, transparent 50%),
+                        radial-gradient(circle at 80% 20%, #a855f7, transparent 50%),
+                        linear-gradient(135deg, #1a1a1a, #2d1b69);
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-content h2 {
+            font-size: 2rem;
+            color: #a855f7;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            color: #e5e7eb;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #6d28d9, #a855f7);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease 0.9s both;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.5);
+        }
+
+        /* About Section */
+        .about {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ffffff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            color: #e5e7eb;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .skill-tag {
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid #a855f7;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            color: #a855f7;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            background: #a855f7;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #a855f7;
+            display: block;
+        }
+
+        .stat-label {
+            color: #e5e7eb;
+            font-size: 1.1rem;
+        }
+
+        /* Projects Section */
+        .projects {
+            padding: 6rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .projects-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .project-card:hover::before {
+            left: 100%;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2);
+        }
+
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #6d28d9, #a855f7);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .project-card h3 {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .project-card p {
+            color: #e5e7eb;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-tag {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .project-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .project-link {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid #a855f7;
+            color: #a855f7;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .project-link:hover {
+            background: #a855f7;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 6rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-form {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            margin-top: 3rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #a855f7;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #6d28d9, #a855f7);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Success/Error Messages */
+        .form-message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .form-message.success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+
+        .form-message.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.5);
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-links a {
+            color: #a855f7;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Keyframe animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateY(-50%) scale(1); opacity: 1; }
+            50% { transform: translateY(-50%) scale(1.2); opacity: 0.8; }
+        }
+
+        @keyframes slideInFromTop {
+            from {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes navItemFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Navigation animation on page load */
+        .nav-links li {
+            animation: navItemFadeIn 0.6s ease forwards;
+        }
+
+        .nav-links li:nth-child(1) { animation-delay: 0.1s; opacity: 0; }
+        .nav-links li:nth-child(2) { animation-delay: 0.2s; opacity: 0; }
+        .nav-links li:nth-child(3) { animation-delay: 0.3s; opacity: 0; }
+        .nav-links li:nth-child(4) { animation-delay: 0.4s; opacity: 0; }
+
+        .logo {
+            animation: slideInFromTop 0.8s ease forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .nav-container {
+                padding: 0 1.5rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-content h2 {
+                font-size: 1.5rem;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .about-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="logo">JDU</a>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <ul class="mobile-nav-links">
+            <li><a href="#home" class="mobile-nav-link">Home</a></li>
+            <li><a href="#about" class="mobile-nav-link">About</a></li>
+            <li><a href="#projects" class="mobile-nav-link">Projects</a></li>
+            <li><a href="#contact" class="mobile-nav-link">Contact</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Jakadwangdu</h1>
+            <h2>Developer Programmer </h2>
+            <a href="#projects" class="cta-button">View My Work</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <h2 class="section-title">About Me</h2>
+        <div class="about-content">
+            <div>
+                <div class="about-text">
+                    <p>Hi! I'm Jakadwangdu, a 18-year-old developer with a passion for creating innovative solutions through code. Despite my young age, I have developed a strong foundation in multiple programming languages and am constantly learning new technologies.</p>
+                    
+                    <p>My journey in programming started early, and I've been dedicated to mastering the art of web development and software programming. I believe in writing clean, efficient code and creating user-friendly applications.</p>
+                    
+                    <div class="skills">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">HTML5</span>
+                        <span class="skill-tag">CSS3</span>
+                        <span class="skill-tag">Web Development</span>
+                        <span class="skill-tag">Problem Solving</span>
+                        <span class="skill-tag">Critical Thinking</span>
+                    </div>
+                </div>
+            </div>
+            <div class="about-stats">
+                <div class="stat-item">
+                    <span class="stat-number">18</span>
+                    <span class="stat-label">Years Old</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">4+</span>
+                    <span class="stat-label">Languages</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Projects</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Passion</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="projects" id="projects">
+        <div class="projects-container">
+            <h2 class="section-title">My Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>Personal Portfolio</h3>
+                    </div>
+                    <p>A responsive portfolio website showcasing my skills and projects, built with modern HTML, CSS, and JavaScript techniques.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">HTML</span>
+                        <span class="tech-tag">CSS</span>
+                        <span class="tech-tag">JavaScript</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="#" class="project-link">View Web</a>
+                        <a href="https://github.com/jakadwangdu" class="project-link">GitHub</a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </div>
+                        <h3>Dhundo</h3>
+                    </div>
+                    <p>A website use to find movie , audio , books on internet</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">Calculate</span>
+                        <span class="tech-tag">Mathmatics</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/jakadwangdu/Dhundo"class="project-link">View Code</a>
+                        <a href="https://jakadwangdu.github.io/Dhundo" class="project-link">View Web</a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3>QR generater</h3>
+                    </div>
+                    <p>QR generater no logIn requried generate qr image of text or link </p>
+                    <div class="project-tech">
+                        <span class="tech-tag">JavaScript</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/jakadwangdu/QR" class="project-link">Play Game</a>
+                        <a href="https://github.com/jakadwangdu/QR" class="project-link">Source</a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-cloud-meatball"></i>
+                        </div>
+                        <h3>Weather Forecast</h3>
+                    </div>
+                    <p>A fully responsive Weather Forecast website  with modern design principles, optimized for all device types and screen sizes.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">HTML</span>
+                        <span class="tech-tag">CSS</span>
+                        <span class="tech-tag">JavaScript</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://jakadwangdu.github.io/Weather" class="project-link">Live Site</a>
+                        <a href="https://github.com/jakadwangdu/Weather" class="project-link">Source Code</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <h2 class="section-title">Get In Touch</h2>
+        <p style="text-align: center; color: #e5e7eb; font-size: 1.1rem;">Have a project in mind or want to collaborate? I'd love to hear from you!</p>
+        
+        <form class="contact-form" id="contactForm">
+            <div class="form-message" id="formMessage"></div>
+            
+            <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Your Email</label>
+                <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject" placeholder="What's this about?" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="5" placeholder="Tell me about your project or just say hi!" required></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <i class="fas fa-paper-plane"></i> Send Message
+            </button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="social-links">
+            <a href="https://github.com/jakadwangdu" title="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://instagram.com/jakadwangdu_official" title="Instagram"><i class="fab fa-instagram"></i></a>
+        </div>
+        <p>&copy; 2025 Jakadwangdu. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Enhanced navigation functionality
+        const navbar = document.getElementById('navbar');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        
+        // Smooth scrolling for navigation links
+        function setupSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        // Close mobile menu if open
+                        mobileNav.classList.remove('active');
+                        mobileMenuBtn.classList.remove('active');
+                        
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        // Update active nav link
+                        updateActiveNavLink(this.getAttribute('href'));
+                    }
+                });
+            });
+        }
+
+        // Update active navigation link
+        function updateActiveNavLink(targetHref) {
+            // Remove active class from all nav links
+            navLinks.forEach(link => link.classList.remove('active'));
+            mobileNavLinks.forEach(link => link.classList.remove('active'));
+            
+            // Add active class to clicked link
+            const activeLink = document.querySelector(`.nav-link[href="${targetHref}"]`);
+            const activeMobileLink = document.querySelector(`.mobile-nav-link[href="${targetHref}"]`);
+            
+            if (activeLink) activeLink.classList.add('active');
+            if (activeMobileLink) activeMobileLink.classList.add('active');
+        }
+
+        // Navigation scroll effects and active section highlighting
+        function handleScroll() {
+            const scrolled = window.scrollY > 100;
+            
+            // Add/remove scrolled class
+            if (scrolled) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            
+            // Update active nav link based on scroll position
+            const sections = ['home', 'about', 'projects', 'contact'];
+            const scrollPosition = window.scrollY + 150;
+            
+            for (let i = sections.length - 1; i >= 0; i--) {
+                const section = document.getElementById(sections[i]);
+                if (section && section.offsetTop <= scrollPosition) {
+                    updateActiveNavLink(`#${sections[i]}`);
+                    break;
+                }
+            }
+        }
+
+        // Mobile menu toggle
+        function setupMobileMenu() {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenuBtn.classList.toggle('active');
+                mobileNav.classList.toggle('active');
+            });
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!mobileNav.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    mobileNav.classList.remove('active');
+                    mobileMenuBtn.classList.remove('active');
+                }
+            });
+        }
+
+        // Contact form submission with FormSubmit
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const formMessage = document.getElementById('formMessage');
+            const form = e.target;
+            
+            // Get form data
+            const formData = new FormData(form);
+            
+            // Disable button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            formMessage.style.display = 'none';
+            
+            try {
+                // Using FormSubmit.co service - FREE and no backend required
+                const response = await fetch('https://formsubmit.co/ajax/jakadwangdu@outlook.com', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: formData.get('name'),
+                        email: formData.get('email'),
+                        subject: formData.get('subject'),
+                        message: formData.get('message')
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Success
+                    formMessage.textContent = '✓ Message sent successfully! I\'ll get back to you soon.';
+                    formMessage.className = 'form-message success';
+                    formMessage.style.display = 'block';
+                    form.reset();
+                } else {
+                    throw new Error('Failed to send message');
+                }
+            } catch (error) {
+                // Error
+                formMessage.textContent = '✗ Oops! Something went wrong. Please try again or email me directly at jakadwangdu@outlook.com';
+                formMessage.className = 'form-message error';
+                formMessage.style.display = 'block';
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+                
+                // Hide message after 5 seconds
+                setTimeout(() => {
+                    formMessage.style.display = 'none';
+                }, 5000);
+            }
+        });
+
+        // Add animation on scroll for project cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe project cards
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+
+        // Add typing effect to hero text
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Initialize all functionality when page loads
+        window.addEventListener('load', function() {
+            setupSmoothScrolling();
+            setupMobileMenu();
+            
+            // Initialize typing effect
+            const heroTitle = document.querySelector('.hero-content h1');
+            const originalText = heroTitle.textContent;
+            heroTitle.textContent = '';
+            setTimeout(() => {
+                typeWriter(heroTitle, originalText, 150);
+            }, 500);
+        });
+
+        // Add scroll listener
+        window.addEventListener('scroll', handleScroll);
+        
+        // Initialize scroll state
+        handleScroll();
+    </script>
+</body>
+</html>
