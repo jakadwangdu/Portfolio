@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jakadwangdu — Creative Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+<style>
+/* ══════════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════════ */
+:root {
+  --bg:         #000000;
+  --bg2:        #080808;
+  --bg3:        #0f0f0f;
+  --white:      #FFFFFF;
+  --dev-grey:   #606060;
+  --muted:      #BDBDBD;
+  --dim:        #3a3a3a;
+  --accent:     #00ff88;
+  --accent2:    #0088ff;
+  --mono:       'JetBrains Mono', monospace;
+  --sans:       'Space Grotesk', sans-serif;
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: auto;
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--sans);
+  cursor: none;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 1px; }
+
+/* ══════════════════════════════════════════════
+   CURSOR
+══════════════════════════════════════════════ */
+#c-dot {
+  position: fixed; top: 0; left: 0;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--white);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+#c-ring {
+  position: fixed; top: 0; left: 0;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.3);
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  mix-blend-mode: difference;
+  will-change: transform;
+  display: flex; align-items: center; justify-content: center;
+  transition: width .35s cubic-bezier(.16,1,.3,1),
+              height .35s cubic-bezier(.16,1,.3,1),
+              border-color .3s ease,
+              background .3s ease;
+}
+#c-ring.hover {
+  width: 72px; height: 72px;
+  border-color: var(--accent);
+  background:#fff;
+}
+#c-ring.click {
+  width: 20px; height: 20px;
+  background: rgba(255,255,255,0.1);
+}
+#c-label {
+  font-family: var(--mono);
+  font-size: 8px; letter-spacing: .15em;
+  color: var(--white);
+  opacity: 0;
+  transition: opacity .2s ease;
+  white-space: nowrap;
+}
+#c-ring.hover #c-label { opacity: 1; }
+
+/* ══════════════════════════════════════════════
+   NAV
+══════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 200;
+  padding: 24px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .4s ease, backdrop-filter .4s ease;
+}
+.nav-logo {
+  font-family: var(--mono);
+  font-size: 13px; font-weight: 500;
+  letter-spacing: .12em;
+  color: var(--white);
+  text-decoration: none;
+  text-transform: lowercase;
+}
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: .15em;
+  color: var(--muted);
+  text-decoration: none;
+  text-transform: lowercase;
+  position: relative;
+  transition: color .3s ease;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute; bottom: -3px; left: 0;
+  width: 0; height: 1px;
+  background: var(--accent);
+  transition: width .4s cubic-bezier(.16,1,.3,1);
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links a:hover::after { width: 100%; }
+.nav-status {
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: .2em;
+  color: var(--dim);
+  display: flex; align-items: center; gap: 8px;
+}
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%; background: var(--accent);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.2; }
+}
+
+/* ══════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════ */
+#hero {
+  position: relative;
+  height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+#particle-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+.hero-grid-lines {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+}
+.hero-content {
+  position: relative; z-index: 2;
+  text-align: left;
+  padding: 0 48px;
+  width: 100%; max-width: 1320px; margin: 0 auto;
+}
+.hero-tag {
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: .35em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  overflow: hidden;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-tag-line { width: 32px; height: 1px; background: var(--accent); }
+.hero-tag span { display: inline-block; transform: translateY(100%); }
+
+.hero-name {
+  font-family: var(--sans);
+  font-size: clamp(52px, 8vw, 110px);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+  color: var(--white);
+}
+.hero-name .line { overflow: hidden; display: block; }
+.hero-name .word { display: inline-block; transform: translateY(115%); }
+
+.hero-role {
+  font-family: var(--sans);
+  font-size: clamp(40px, 6vw, 82px);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--dev-grey);
+  margin-bottom: 40px;
+}
+.hero-role .line { overflow: hidden; display: block; }
+.hero-role .word { display: inline-block; transform: translateY(115%); }
+
+.hero-desc {
+  font-family: var(--mono);
+  font-size: 12px; line-height: 1.9;
+  color: var(--muted);
+  max-width: 440px; margin-bottom: 52px;
+  overflow: hidden;
+}
+.hero-desc span { display: block; transform: translateY(100%); }
+
+.hero-actions {
+  display: flex; align-items: center; gap: 24px;
+  opacity: 0;
+}
+.btn-primary {
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: .2em;
+  color: var(--bg); background: var(--white);
+  padding: 14px 28px;
+  text-decoration: none;
+  text-transform: lowercase;
+  display: inline-flex; align-items: center; gap: 10px;
+  transition: background .3s ease, transform .3s cubic-bezier(.16,1,.3,1);
+  border: 1px solid var(--white);
+}
+.btn-primary:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+.btn-ghost {
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: .2em;
+  color: var(--muted);
+  padding: 14px 28px;
+  text-decoration: none;
+  text-transform: lowercase;
+  border: 1px solid var(--dim);
+  display: inline-flex; align-items: center; gap: 10px;
+  transition: border-color .3s ease, color .3s ease, transform .3s cubic-bezier(.16,1,.3,1);
+}
+.btn-ghost:hover { border-color: var(--white); color: var(--white); transform: translateY(-2px); }
+
+.hero-scroll {
+  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+  z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  opacity: 0;
+}
+.hero-scroll span {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .3em;
+  color: var(--dim); text-transform: uppercase; writing-mode: vertical-rl;
+}
+.scroll-track {
+  width: 1px; height: 52px;
+  background: linear-gradient(to bottom, transparent, var(--dim));
+  position: relative; overflow: hidden;
+}
+.scroll-track::after {
+  content: '';
+  position: absolute; top: -100%; left: 0;
+  width: 1px; height: 100%;
+  background: var(--accent);
+  animation: trackDown 2s ease-in-out infinite 1s;
+}
+@keyframes trackDown {
+  0%   { top: -100%; }
+  100% { top: 100%; }
+}
+
+/* ══════════════════════════════════════════════
+   TICKER / MARQUEE
+══════════════════════════════════════════════ */
+#ticker {
+  padding: 18px 0; overflow: hidden;
+  border-top: 1px solid var(--dim);
+  border-bottom: 1px solid var(--dim);
+  background: var(--bg);
+}
+.ticker-track {
+  display: flex; gap: 0; white-space: nowrap;
+  animation: tickerScroll 28s linear infinite;
+}
+.ticker-item {
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: .2em;
+  color: var(--dim); text-transform: lowercase;
+  padding: 0 32px; flex-shrink: 0;
+}
+.ticker-sep { color: var(--accent); margin-right: 32px; }
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ══════════════════════════════════════════════
+   SECTION COMMON
+══════════════════════════════════════════════ */
+section { position: relative; padding: 120px 0; }
+.container { max-width: 1320px; margin: 0 auto; padding: 0 48px; }
+.sec-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .4em;
+  color: var(--accent); text-transform: uppercase; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.sec-label::before {
+  content: ''; width: 24px; height: 1px; background: var(--accent);
+}
+
+/* ══════════════════════════════════════════════
+   ABOUT
+══════════════════════════════════════════════ */
+#about { background: var(--bg2); }
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+}
+.about-heading {
+  font-size: clamp(32px, 4vw, 60px); font-weight: 700;
+  line-height: 1.1; letter-spacing: -.02em; margin-bottom: 28px;
+}
+.about-heading .line { overflow: hidden; display: block; }
+.about-heading .word { display: inline-block; }
+.about-heading em { font-style: italic; color: var(--muted); font-weight: 300; }
+.about-text {
+  font-size: 15px; line-height: 1.85; color: var(--muted); margin-bottom: 20px;
+}
+.about-text code {
+  font-family: var(--mono); font-size: 12px;
+  color: var(--accent); background: rgba(0,255,136,.08);
+  padding: 2px 6px; border-radius: 2px;
+}
+
+.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; margin-top: 48px; }
+.stat-box {
+  background: var(--bg3); padding: 28px 24px;
+  border: 1px solid var(--dim);
+  transition: border-color .3s ease, transform .4s cubic-bezier(.16,1,.3,1);
+}
+.stat-box:hover { border-color: var(--accent); transform: translateY(-4px); }
+.stat-n {
+  font-size: 44px; font-weight: 700; letter-spacing: -.03em;
+  color: var(--white); line-height: 1; margin-bottom: 6px;
+}
+.stat-n span { color: var(--accent); }
+.stat-d {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .25em;
+  color: var(--dev-grey); text-transform: uppercase;
+}
+
+/* terminal card */
+.terminal {
+  background: var(--bg3); border: 1px solid var(--dim);
+  border-radius: 4px; overflow: hidden;
+  font-family: var(--mono);
+  box-shadow: 0 40px 80px rgba(0,0,0,.6);
+}
+.terminal-bar {
+  background: #1a1a1a; padding: 12px 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.t-dot { width: 10px; height: 10px; border-radius: 50%; }
+.t-dot.r { background: #ff5f57; }
+.t-dot.y { background: #febc2e; }
+.t-dot.g { background: #28c840; }
+.terminal-title {
+  flex: 1; text-align: center;
+  font-size: 10px; letter-spacing: .15em; color: var(--dim);
+}
+.terminal-body { padding: 24px; font-size: 12px; line-height: 1.9; }
+.t-line { display: flex; gap: 10px; }
+.t-prompt { color: var(--accent); flex-shrink: 0; }
+.t-cmd { color: var(--white); }
+.t-out { color: var(--muted); padding-left: 20px; }
+.t-caret {
+  display: inline-block; width: 8px; height: 13px;
+  background: var(--accent);
+  animation: caretBlink 1s steps(1) infinite;
+  vertical-align: text-bottom; margin-left: 2px;
+}
+@keyframes caretBlink {
+  0%,100% { opacity: 1; } 50% { opacity: 0; }
+}
+
+/* ══════════════════════════════════════════════
+   SKILLS
+══════════════════════════════════════════════ */
+#skills { background: var(--bg); }
+.skills-heading {
+  font-size: clamp(36px, 5vw, 72px); font-weight: 700;
+  letter-spacing: -.03em; margin-bottom: 64px;
+}
+.skills-heading .line { overflow: hidden; display: block; }
+.skills-heading .word { display: inline-block; }
+.skills-heading .dim { color: var(--dev-grey); }
+
+.skills-cols { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+.skill-col { background: var(--bg2); border: 1px solid var(--dim); padding: 32px; }
+.skill-col-title {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .3em;
+  color: var(--accent); text-transform: uppercase; margin-bottom: 24px;
+}
+.skill-tag {
+  display: inline-block;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
+  color: var(--muted); border: 1px solid var(--dim);
+  padding: 6px 12px; margin: 4px 4px 4px 0;
+  transition: border-color .3s ease, color .3s ease, transform .3s cubic-bezier(.16,1,.3,1);
+}
+.skill-tag:hover { border-color: var(--white); color: var(--white); transform: translateY(-2px); }
+
+/* ══════════════════════════════════════════════
+   PROJECTS
+══════════════════════════════════════════════ */
+#projects { background: var(--bg2); }
+.projects-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 64px;
+}
+.projects-title {
+  font-size: clamp(36px, 5vw, 72px); font-weight: 700;
+  letter-spacing: -.03em; line-height: 1;
+}
+.projects-title .line { overflow: hidden; display: block; }
+.projects-title .word { display: inline-block; }
+.projects-count {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .15em;
+  color: var(--dev-grey);
+}
+.projects-count span { color: var(--accent); font-size: 28px; font-weight: 700; display: block; line-height: 1; }
+
+.proj-list { list-style: none; border-top: 1px solid var(--dim); }
+.proj-item {
+  display: grid; grid-template-columns: 60px 1fr auto;
+  align-items: center; gap: 40px;
+  padding: 32px 0; border-bottom: 1px solid var(--dim);
+  cursor: none;
+  transition: padding-left .5s cubic-bezier(.16,1,.3,1);
+  position: relative; overflow: hidden;
+}
+.proj-item::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: rgba(0,255,136,.03);
+  transition: width .5s cubic-bezier(.16,1,.3,1);
+}
+.proj-item:hover { padding-left: 20px; }
+.proj-item:hover::before { width: 100%; }
+
+.proj-num {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .2em;
+  color: var(--dim);
+}
+.proj-info {}
+.proj-name {
+  font-size: clamp(20px, 2.5vw, 36px); font-weight: 600;
+  letter-spacing: -.01em; margin-bottom: 6px;
+  transition: color .3s ease;
+}
+.proj-item:hover .proj-name { color: var(--accent); }
+.proj-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.proj-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .15em;
+  color: var(--dev-grey); text-transform: uppercase;
+}
+.proj-tag + .proj-tag::before { content: '·'; margin-right: 8px; }
+.proj-arrow {
+  font-family: var(--mono); font-size: 20px; color: var(--dim);
+  transition: color .3s ease, transform .4s cubic-bezier(.16,1,.3,1);
+}
+.proj-item:hover .proj-arrow { color: var(--accent); transform: translateX(8px) rotate(-45deg); }
+
+/* ══════════════════════════════════════════════
+   CODE SNIPPET
+══════════════════════════════════════════════ */
+#code-section {
+  background: var(--bg);
+  overflow: hidden;
+  padding: 80px 0;
+}
+.code-scroll-track {
+  display: flex; gap: 0; white-space: nowrap;
+  animation: codeScroll 40s linear infinite;
+}
+.code-chunk {
+  font-family: var(--mono); font-size: 11px;
+  line-height: 1.9; color: var(--dim);
+  padding: 0 40px; flex-shrink: 0;
+  border-right: 1px solid var(--bg3);
+}
+.code-chunk .kw  { color: #c678dd; }
+.code-chunk .fn  { color: #61afef; }
+.code-chunk .str { color: #98c379; }
+.code-chunk .cm  { color: var(--dev-grey); font-style: italic; }
+.code-chunk .num { color: #d19a66; }
+@keyframes codeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ══════════════════════════════════════════════
+   CONTACT FOOTER
+══════════════════════════════════════════════ */
+#contact {
+  background: var(--bg);
+  padding-bottom: 0;
+  border-top: 1px solid var(--dim);
+}
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+  padding-bottom: 80px;
+}
+.contact-heading {
+  font-size: clamp(32px, 4vw, 60px); font-weight: 700;
+  letter-spacing: -.02em; line-height: 1.1; margin-bottom: 20px;
+}
+.contact-heading .line { overflow: hidden; display: block; }
+.contact-heading .word { display: inline-block; }
+.contact-sub {
+  font-size: 14px; line-height: 1.8; color: var(--muted); margin-bottom: 40px;
+}
+.contact-links { display: flex; flex-direction: column; gap: 16px; }
+.contact-link {
+  display: flex; align-items: center; gap: 14px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
+  color: var(--muted); text-decoration: none;
+  transition: color .3s ease;
+}
+.contact-link:hover { color: var(--white); }
+.contact-link-icon {
+  width: 36px; height: 36px; border: 1px solid var(--dim);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  transition: border-color .3s ease, background .3s ease;
+}
+.contact-link:hover .contact-link-icon {
+  border-color: var(--accent); background: rgba(0,255,136,.06);
+}
+
+/* Form */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .25em;
+  color: var(--dev-grey); text-transform: uppercase; display: block; margin-bottom: 8px;
+}
+.form-input,
+.form-textarea {
+  width: 100%;
+  background: var(--bg2); border: 1px solid var(--dim);
+  color: var(--white);
+  font-family: var(--mono); font-size: 13px;
+  padding: 14px 18px;
+  outline: none; resize: none;
+  transition: border-color .3s ease, background .3s ease;
+  appearance: none;
+}
+.form-input:focus, .form-textarea:focus {
+  border-color: var(--accent); background: var(--bg3);
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--dev-grey); }
+.form-textarea { min-height: 120px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.btn-send {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .2em;
+  color: var(--bg); background: var(--accent);
+  padding: 16px 32px; border: none; cursor: none;
+  text-transform: lowercase; width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: background .3s ease, transform .3s cubic-bezier(.16,1,.3,1);
+  margin-top: 8px;
+}
+.btn-send:hover { background: var(--white); transform: translateY(-2px); }
+.btn-send:disabled { opacity: .5; cursor: not-allowed; }
+
+.form-status {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+  margin-top: 12px; min-height: 20px; text-align: center;
+}
+.form-status.ok { color: var(--accent); }
+.form-status.err { color: #ff4d4d; }
+
+/* Footer bottom */
+.footer-bottom {
+  border-top: 1px solid var(--dim);
+  padding: 28px 0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-copy {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .2em; color: var(--dim);
+}
+.footer-links-row { display: flex; gap: 28px; list-style: none; }
+.footer-links-row a {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .15em;
+  color: var(--dim); text-decoration: none; text-transform: lowercase;
+  transition: color .3s ease;
+}
+.footer-links-row a:hover { color: var(--accent); }
+
+/* ══════════════════════════════════════════════
+   GRAIN
+══════════════════════════════════════════════ */
+.grain {
+  position: fixed; inset: -200%; width: 400%; height: 400%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+  opacity: 0.022; pointer-events: none; z-index: 9990;
+  animation: grainAnim .4s steps(2) infinite;
+}
+@keyframes grainAnim {
+  0%,100% { transform: translate(0,0); }
+  25%      { transform: translate(-2%,-1%); }
+  75%      { transform: translate(1%,2%); }
+}
+
+/* ══════════════════════════════════════════════
+   UTILITIES / HELPERS
+══════════════════════════════════════════════ */
+.clip { overflow: hidden; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  nav { padding: 20px 24px; }
+  .nav-links { display: none; }
+  .container { padding: 0 24px; }
+  .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+  .skills-cols, .stats-grid, .form-row { grid-template-columns: 1fr; }
+  section { padding: 80px 0; }
+  .hero-content { padding: 0 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<!-- Custom Cursor -->
+<div id="c-dot"></div>
+<div id="c-ring"><span id="c-label">open</span></div>
+
+<!-- ══════════ NAV ══════════ -->
+<nav id="main-nav">
+  <a class="nav-logo" href="#">&lt;<span>jaka</span>/&gt;</a>
+  <ul class="nav-links">
+    <li><a href="#about">about</a></li>
+    <li><a href="#skills">skills</a></li>
+    <li><a href="#projects">projects</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    <span>available for work</span>
+  </div>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<section id="hero">
+  <canvas id="particle-canvas"></canvas>
+  <div class="hero-grid-lines"></div>
+
+  <!-- SVG accent -->
+  <svg id="svg-accent" style="position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+    <path id="ap1" d="M0,600 C360,200 720,800 1080,400 C1260,200 1380,600 1440,500" fill="none" stroke="rgba(0,255,136,0.06)" stroke-width="1"/>
+    <path id="ap2" d="M-100,300 C200,600 500,100 800,450 C1100,750 1300,200 1540,400" fill="none" stroke="rgba(0,136,255,0.04)" stroke-width="0.5"/>
+    <circle id="ac" cx="1200" cy="200" r="180" fill="none" stroke="rgba(0,255,136,0.04)" stroke-width="1" stroke-dasharray="4 12"/>
+    <circle id="ac2" cx="200" cy="700" r="120" fill="none" stroke="rgba(0,136,255,0.03)" stroke-width="0.5" stroke-dasharray="3 10"/>
+  </svg>
+
+  <div class="hero-content">
+    <div class="hero-tag">
+      <span class="hero-tag-line"></span>
+      <span>18 y/o · full-stack developer · 3 yrs exp</span>
+    </div>
+    <h1 class="hero-name">
+      <span class="line"><span class="word">Jakadwangdu</span></span>
+    </h1>
+    <div class="hero-role">
+      <span class="line"><span class="word">Creative</span></span>
+      <span class="line"><span class="word">Developer</span></span>
+    </div>
+    <div class="hero-desc">
+      <span>// building digital experiences with clean code,<br>sharp design, and a passion for the impossible.</span>
+    </div>
+    <div class="hero-actions">
+      <a class="btn-primary hover-el" href="#projects">
+        view_projects() <span>→</span>
+      </a>
+      <a class="btn-ghost hover-el" href="https://github.com/jakadwangdu" target="_blank" rel="noopener">
+        github.open() <span>↗</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-scroll" id="scroll-hint">
+    <span>scroll</span>
+    <div class="scroll-track"></div>
+  </div>
+</section>
+
+<!-- ══════════ TICKER ══════════ -->
+<div id="ticker">
+  <div class="ticker-track" id="tickerTrack">
+    <span class="ticker-item">react.js <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">node.js <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">typescript <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">three.js <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">python <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">next.js <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">mongodb <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">postgresql <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">docker <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">git <span class="ticker-sep">·</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item">react.js <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">node.js <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">typescript <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">three.js <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">python <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">next.js <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">mongodb <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">postgresql <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">docker <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">git <span class="ticker-sep">·</span></span>
+  </div>
+</div>
+
+<!-- ══════════ ABOUT ══════════ -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <p class="sec-label">about.me</p>
+        <h2 class="about-heading">
+          <span class="line"><span class="word">Code is my</span></span>
+          <span class="line"><em><span class="word">superpower</span></em></span>
+        </h2>
+        <p class="about-text">
+          Hey — I'm <code>Jakadwangdu</code>, an 18-year-old self-taught developer who's been shipping real products since I was 15. I live at the intersection of clean code and sharp design.
+        </p>
+        <p class="about-text">
+          Over <code>3 years</code> of grinding through late nights and side projects, I've built <code>50+ projects</code> spanning web apps, APIs, developer tools, and interactive experiences.
+        </p>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-n">18<span>yr</span></div>
+            <div class="stat-d">Age</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-n">3<span>+</span></div>
+            <div class="stat-d">Years Exp</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-n">50<span>+</span></div>
+            <div class="stat-d">Projects</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot r"></div>
+          <div class="t-dot y"></div>
+          <div class="t-dot g"></div>
+          <span class="terminal-title">~/jakadwangdu — bash</span>
+        </div>
+        <div class="terminal-body">
+          <div class="t-line"><span class="t-prompt">❯</span><span class="t-cmd">whoami</span></div>
+          <div class="t-out">jakadwangdu — creative developer</div>
+          <br>
+          <div class="t-line"><span class="t-prompt">❯</span><span class="t-cmd">cat skills.json</span></div>
+          <div class="t-out">{ <span style="color:#c678dd">"focus"</span>: <span style="color:#98c379">"fullstack"</span>,</div>
+          <div class="t-out">&nbsp;&nbsp;<span style="color:#c678dd">"languages"</span>: [<span style="color:#98c379">"JS"</span>, <span style="color:#98c379">"TS"</span>, <span style="color:#98c379">"Py"</span>],</div>
+          <div class="t-out">&nbsp;&nbsp;<span style="color:#c678dd">"age"</span>: <span style="color:#d19a66">18</span>,</div>
+          <div class="t-out">&nbsp;&nbsp;<span style="color:#c678dd">"projects"</span>: <span style="color:#d19a66">50</span>+ }</div>
+          <br>
+          <div class="t-line"><span class="t-prompt">❯</span><span class="t-cmd">git log --oneline -3</span></div>
+          <div class="t-out"><span style="color:var(--accent)">a3f91bc</span> feat: ship another banger</div>
+          <div class="t-out"><span style="color:var(--accent)">d2e04ad</span> fix: squash the bug</div>
+          <div class="t-out"><span style="color:var(--accent)">88c12ff</span> init: new project unlocked</div>
+          <br>
+          <div class="t-line"><span class="t-prompt">❯</span><span class="t-cmd" id="typed-cmd"></span><span class="t-caret"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SKILLS ══════════ -->
+<section id="skills">
+  <div class="container">
+    <p class="sec-label">tech.stack</p>
+    <h2 class="skills-heading">
+      <span class="line"><span class="word">What I</span></span>
+      <span class="line"><span class="word dim">build with</span></span>
+    </h2>
+    <div class="skills-cols">
+      <div class="skill-col">
+        <div class="skill-col-title">// frontend</div>
+        <span class="skill-tag">React</span>
+        <span class="skill-tag">Next.js</span>
+        <span class="skill-tag">TypeScript</span>
+        <span class="skill-tag">Three.js</span>
+        <span class="skill-tag">GSAP</span>
+        <span class="skill-tag">Tailwind</span>
+        <span class="skill-tag">Framer Motion</span>
+        <span class="skill-tag">WebGL</span>
+      </div>
+      <div class="skill-col">
+        <div class="skill-col-title">// backend</div>
+        <span class="skill-tag">Node.js</span>
+        <span class="skill-tag">Express</span>
+        <span class="skill-tag">FastAPI</span>
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">PostgreSQL</span>
+        <span class="skill-tag">MongoDB</span>
+        <span class="skill-tag">Redis</span>
+        <span class="skill-tag">GraphQL</span>
+      </div>
+      <div class="skill-col">
+        <div class="skill-col-title">// tools</div>
+        <span class="skill-tag">Git</span>
+        <span class="skill-tag">Docker</span>
+        <span class="skill-tag">AWS</span>
+        <span class="skill-tag">Vercel</span>
+        <span class="skill-tag">Linux</span>
+        <span class="skill-tag">Figma</span>
+        <span class="skill-tag">Vite</span>
+        <span class="skill-tag">GitHub Actions</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CODE SCROLL ══════════ -->
+<div id="code-section">
+  <div class="code-scroll-track" id="codeTrack">
+    <div class="code-chunk">
+      <div><span class="cm">// auth middleware</span></div>
+      <div><span class="kw">const</span> <span class="fn">authenticate</span> = <span class="kw">async</span> (req, res, next) => {</div>
+      <div>&nbsp;&nbsp;<span class="kw">const</span> token = req.headers.<span class="fn">authorization</span>;</div>
+      <div>&nbsp;&nbsp;<span class="kw">if</span> (!token) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({});</div>
+      <div>&nbsp;&nbsp;<span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">verifyJWT</span>(token);</div>
+      <div>&nbsp;&nbsp;<span class="fn">next</span>();</div>
+      <div>}</div>
+    </div>
+    <div class="code-chunk">
+      <div><span class="cm">// react hook</span></div>
+      <div><span class="kw">function</span> <span class="fn">useDebounce</span>&lt;T&gt;(value: T, delay: <span class="kw">number</span>) {</div>
+      <div>&nbsp;&nbsp;<span class="kw">const</span> [dv, setDv] = <span class="fn">useState</span>(value);</div>
+      <div>&nbsp;&nbsp;<span class="fn">useEffect</span>(() => {</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">const</span> t = <span class="fn">setTimeout</span>(() => <span class="fn">setDv</span>(value), delay);</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> () => <span class="fn">clearTimeout</span>(t);</div>
+      <div>&nbsp;&nbsp;}, [value, delay]);</div>
+      <div>}</div>
+    </div>
+    <div class="code-chunk">
+      <div><span class="cm">// api route</span></div>
+      <div><span class="fn">app</span>.<span class="fn">get</span>(<span class="str">'/api/projects'</span>, <span class="kw">async</span> (req, res) => {</div>
+      <div>&nbsp;&nbsp;<span class="kw">const</span> data = <span class="kw">await</span> db.projects.<span class="fn">findAll</span>({</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;where: { status: <span class="str">'published'</span> },</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;order: [['createdAt', <span class="str">'DESC'</span>]],</div>
+      <div>&nbsp;&nbsp;});</div>
+      <div>&nbsp;&nbsp;res.<span class="fn">json</span>({ data, count: data.length });</div>
+      <div>});</div>
+    </div>
+    <!-- duplicate -->
+    <div class="code-chunk">
+      <div><span class="cm">// auth middleware</span></div>
+      <div><span class="kw">const</span> <span class="fn">authenticate</span> = <span class="kw">async</span> (req, res, next) => {</div>
+      <div>&nbsp;&nbsp;<span class="kw">const</span> token = req.headers.<span class="fn">authorization</span>;</div>
+      <div>&nbsp;&nbsp;<span class="kw">if</span> (!token) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({});</div>
+      <div>&nbsp;&nbsp;<span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">verifyJWT</span>(token);</div>
+      <div>&nbsp;&nbsp;<span class="fn">next</span>();</div>
+      <div>}</div>
+    </div>
+    <div class="code-chunk">
+      <div><span class="cm">// react hook</span></div>
+      <div><span class="kw">function</span> <span class="fn">useDebounce</span>&lt;T&gt;(value: T, delay: <span class="kw">number</span>) {</div>
+      <div>&nbsp;&nbsp;<span class="kw">const</span> [dv, setDv] = <span class="fn">useState</span>(value);</div>
+      <div>&nbsp;&nbsp;<span class="fn">useEffect</span>(() => {</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">const</span> t = <span class="fn">setTimeout</span>(() => <span class="fn">setDv</span>(value), delay);</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> () => <span class="fn">clearTimeout</span>(t);</div>
+      <div>&nbsp;&nbsp;}, [value, delay]);</div>
+      <div>}</div>
+    </div>
+    <div class="code-chunk">
+      <div><span class="cm">// api route</span></div>
+      <div><span class="fn">app</span>.<span class="fn">get</span>(<span class="str">'/api/projects'</span>, <span class="kw">async</span> (req, res) => {</div>
+      <div>&nbsp;&nbsp;<span class="kw">const</span> data = <span class="kw">await</span> db.projects.<span class="fn">findAll</span>({</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;where: { status: <span class="str">'published'</span> },</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;order: [['createdAt', <span class="str">'DESC'</span>]],</div>
+      <div>&nbsp;&nbsp;});</div>
+      <div>&nbsp;&nbsp;res.<span class="fn">json</span>({ data, count: data.length });</div>
+      <div>});</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PROJECTS ══════════ -->
+<section id="projects">
+  <div class="container">
+    <div class="projects-header">
+      <h2 class="projects-title">
+        <span class="line"><span class="word">Selected</span></span>
+        <span class="line"><span class="word">Projects</span></span>
+      </h2>
+      <div class="projects-count">
+        <span>50+</span>
+        total shipped
+      </div>
+    </div>
+
+    <ul class="proj-list">
+      <li class="proj-item hover-el">
+        <span class="proj-num">01</span>
+        <div class="proj-info">
+          <div class="proj-name">DevFlow CLI</div>
+          <div class="proj-tags">
+            <span class="proj-tag">Node.js</span>
+            <span class="proj-tag">TypeScript</span>
+            <span class="proj-tag">CLI Tool</span>
+          </div>
+        </div>
+        <span class="proj-arrow">→</span>
+      </li>
+      <li class="proj-item hover-el">
+        <span class="proj-num">02</span>
+        <div class="proj-info">
+          <div class="proj-name">NexAuth — Auth SDK</div>
+          <div class="proj-tags">
+            <span class="proj-tag">Node.js</span>
+            <span class="proj-tag">JWT</span>
+            <span class="proj-tag">OAuth2</span>
+          </div>
+        </div>
+        <span class="proj-arrow">→</span>
+      </li>
+      <li class="proj-item hover-el">
+        <span class="proj-num">03</span>
+        <div class="proj-info">
+          <div class="proj-name">Realtime Collab Board</div>
+          <div class="proj-tags">
+            <span class="proj-tag">React</span>
+            <span class="proj-tag">WebSockets</span>
+            <span class="proj-tag">Canvas API</span>
+          </div>
+        </div>
+        <span class="proj-arrow">→</span>
+      </li>
+      <li class="proj-item hover-el">
+        <span class="proj-num">04</span>
+        <div class="proj-info">
+          <div class="proj-name">AI Code Reviewer</div>
+          <div class="proj-tags">
+            <span class="proj-tag">Python</span>
+            <span class="proj-tag">FastAPI</span>
+            <span class="proj-tag">OpenAI API</span>
+          </div>
+        </div>
+        <span class="proj-arrow">→</span>
+      </li>
+      <li class="proj-item hover-el">
+        <span class="proj-num">05</span>
+        <div class="proj-info">
+          <div class="proj-name">3D Portfolio Engine</div>
+          <div class="proj-tags">
+            <span class="proj-tag">Three.js</span>
+            <span class="proj-tag">GLSL</span>
+            <span class="proj-tag">WebGL</span>
+          </div>
+        </div>
+        <span class="proj-arrow">→</span>
+      </li>
+    </ul>
+
+    <div style="margin-top:40px;text-align:center">
+      <a class="btn-ghost hover-el" href="https://github.com/jakadwangdu" target="_blank" rel="noopener" style="display:inline-flex">
+        view_all_on_github() ↗
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CONTACT / FOOTER ══════════ -->
+<footer id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <!-- Left -->
+      <div>
+        <p class="sec-label">contact.init()</p>
+        <h2 class="contact-heading">
+          <span class="line"><span class="word">Let's build</span></span>
+          <span class="line"><span class="word">something</span></span>
+          <span class="line"><span class="word">great</span></span>
+        </h2>
+        <p class="contact-sub">
+          Got a project, collab idea, or just want to say hey?<br>
+          I read every message. Usually reply within 24h.
+        </p>
+        <div class="contact-links">
+          <a class="contact-link hover-el" href="mailto:jakadwangdu@outlook.com">
+            <div class="contact-link-icon">@</div>
+            jakadwangdu@outlook.com
+          </a>
+          <a class="contact-link hover-el" href="https://github.com/jakadwangdu" target="_blank" rel="noopener">
+            <div class="contact-link-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            </div>
+            github.com/jakadwangdu
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: Form -->
+      <div>
+        <p class="sec-label" style="margin-bottom:28px">send_message()</p>
+        <form id="contact-form" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="cf-name">your_name</label>
+              <input class="form-input" id="cf-name" name="from_name" type="text" placeholder="John Doe" required autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cf-email">your_email</label>
+              <input class="form-input" id="cf-email" name="reply_to" type="email" placeholder="john@example.com" required autocomplete="off">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cf-subject">subject</label>
+            <input class="form-input" id="cf-subject" name="subject" type="text" placeholder="Project collab / say hello" required autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cf-msg">message</label>
+            <textarea class="form-textarea" id="cf-msg" name="message" placeholder="// write your message here..." required></textarea>
+          </div>
+          <button class="btn-send hover-el" type="submit" id="send-btn">
+            <span id="send-label">send_message()</span>
+            <span>→</span>
+          </button>
+          <div class="form-status" id="form-status"></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 jakadwangdu. crafted with &lt;3 and caffeine.</span>
+      <ul class="footer-links-row">
+        <li><a href="https://github.com/jakadwangdu" target="_blank" rel="noopener">github</a></li>
+        <li><a href="mailto:jakadwangdu@outlook.com">email</a></li>
+        <li><a href="#hero">back_to_top()</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
+<script>
+/* ─────────────────────────────────────
+   EMAILJS — initialise
+   NOTE: Replace 'YOUR_PUBLIC_KEY' with your EmailJS public key,
+         'YOUR_SERVICE_ID' with your service ID,
+         and 'YOUR_TEMPLATE_ID' with your template ID.
+   For the template, map these variables:
+     {{from_name}}, {{reply_to}}, {{subject}}, {{message}}
+   And set "To email" to jakadwangdu@outlook.com in the EmailJS template.
+───────────────────────────────────── */
+(function() {
+  try { emailjs.init('yS3AFR76rICQSXi-I'); } catch(e) {}
+})();
+
+const EMAILJS_SERVICE  = 'service_objfwqh';
+const EMAILJS_TEMPLATE = 'template_qhv7ujx';
+
+/* ─────────────────────────────────────
+   PARTICLE SYSTEM — pure canvas, ultra-light
+───────────────────────────────────── */
+(function initParticles() {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, particles, mouse = { x: -9999, y: -9999 };
+  const COUNT = 90;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function createParticles() {
+    particles = Array.from({ length: COUNT }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: (Math.random() - 0.5) * 0.25,
+      r: Math.random() * 1.5 + 0.3,
+      op: Math.random() * 0.5 + 0.1,
+    }));
+  }
+
+  resize();
+  createParticles();
+  window.addEventListener('resize', () => { resize(); createParticles(); });
+
+  document.addEventListener('mousemove', e => {
+    mouse.x = e.clientX; mouse.y = e.clientY;
+  });
+
+  const CONNECT_DIST = 120;
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    for (let i = 0; i < COUNT; i++) {
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+      // mouse repel — gentle
+      const dx = p.x - mouse.x, dy = p.y - mouse.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 80) {
+        const force = (80 - dist) / 80 * 0.4;
+        p.x += dx / dist * force;
+        p.y += dy / dist * force;
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${p.op})`;
+      ctx.fill();
+
+      // connect nearby
+      for (let j = i + 1; j < COUNT; j++) {
+        const q = particles[j];
+        const ex = p.x - q.x, ey = p.y - q.y;
+        const ed = Math.sqrt(ex*ex + ey*ey);
+        if (ed < CONNECT_DIST) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = `rgba(255,255,255,${(1 - ed / CONNECT_DIST) * 0.07})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+
+/* ─────────────────────────────────────
+   CURSOR
+───────────────────────────────────── */
+(function initCursor() {
+  const dot  = document.getElementById('c-dot');
+  const ring = document.getElementById('c-ring');
+  const setDotX  = gsap.quickSetter(dot,  'x', 'px');
+  const setDotY  = gsap.quickSetter(dot,  'y', 'px');
+  const setRingX = gsap.quickSetter(ring, 'x', 'px');
+  const setRingY = gsap.quickSetter(ring, 'y', 'px');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  const EASE = 0.1;
+
+  window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  window.addEventListener('mousedown', () => ring.classList.add('click'));
+  window.addEventListener('mouseup',   () => ring.classList.remove('click'));
+
+  gsap.ticker.add(() => {
+    setDotX(mx); setDotY(my);
+    rx += (mx - rx) * EASE; ry += (my - ry) * EASE;
+    setRingX(rx); setRingY(ry);
+  });
+
+  document.querySelectorAll('.hover-el, a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+  });
+})();
+
+
+/* ─────────────────────────────────────
+   TYPED COMMAND (terminal easter egg)
+───────────────────────────────────── */
+(function initTyped() {
+  const el = document.getElementById('typed-cmd');
+  const cmds = ['ls -la projects/', 'npm run dev', 'git push origin main', 'node --watch server.js'];
+  let ci = 0, ci2 = 0, deleting = false;
+
+  function tick() {
+    const cmd = cmds[ci];
+    if (!deleting) {
+      if (ci2 < cmd.length) {
+        el.textContent = cmd.slice(0, ++ci2);
+        setTimeout(tick, 80 + Math.random() * 40);
+      } else {
+        setTimeout(() => { deleting = true; tick(); }, 1800);
+      }
+    } else {
+      if (ci2 > 0) {
+        el.textContent = cmd.slice(0, --ci2);
+        setTimeout(tick, 40);
+      } else {
+        deleting = false;
+        ci = (ci + 1) % cmds.length;
+        setTimeout(tick, 400);
+      }
+    }
+  }
+  setTimeout(tick, 2000);
+})();
+
+
+/* ─────────────────────────────────────
+   GSAP SCROLLTRIGGER
+───────────────────────────────────── */
+gsap.registerPlugin(ScrollTrigger);
+
+// Hero intro
+window.addEventListener('load', () => {
+  const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+  tl.to('.hero-tag span',     { y: 0, duration: 1.1, delay: 0.2 })
+    .to('.hero-name .word',   { y: 0, duration: 1.3, stagger: 0.08 }, '-=0.7')
+    .to('.hero-role .word',   { y: 0, duration: 1.3, stagger: 0.07 }, '-=1.0')
+    .to('.hero-desc span',    { y: 0, duration: 1.1 }, '-=0.8')
+    .to('.hero-actions',      { opacity: 1, y: 0, duration: 0.9 }, '-=0.6')
+    .to('#scroll-hint',       { opacity: 1, duration: 0.8 }, '-=0.4');
+
+  // AnimeJS SVG path draw
+  ['#ap1', '#ap2'].forEach(s => {
+    const el = document.querySelector(s);
+    const L  = el.getTotalLength ? el.getTotalLength() : 1400;
+    el.style.strokeDasharray = L;
+    el.style.strokeDashoffset = L;
+    anime({ targets: s, strokeDashoffset: [L, 0], duration: 3200, easing: 'easeInOutSine', delay: 600 });
+  });
+  anime({ targets: '#ac',  rotate: '360deg', duration: 80000, easing: 'linear', loop: true });
+  anime({ targets: '#ac2', rotate: '-360deg', duration: 60000, easing: 'linear', loop: true });
+});
+
+// Word reveal helper
+function revealSection(selector, trigger) {
+  const words = document.querySelectorAll(`${selector} .word`);
+  if (!words.length) return;
+  gsap.from(words, {
+    y: '115%', duration: 1.2, stagger: 0.05, ease: 'expo.out',
+    scrollTrigger: { trigger: trigger || selector, start: 'top 80%' },
+  });
+}
+
+revealSection('.about-heading',   '#about');
+revealSection('.skills-heading',  '#skills');
+revealSection('.projects-title',  '#projects');
+revealSection('.contact-heading', '#contact');
+
+// About fade-ins
+gsap.from('.about-text', {
+  opacity: 0, y: 24, stagger: 0.15, duration: 1, ease: 'power4.out',
+  scrollTrigger: { trigger: '#about', start: 'top 72%' },
+});
+gsap.from('.stat-box', {
+  opacity: 0, y: 32, stagger: 0.1, duration: 1, ease: 'expo.out',
+  scrollTrigger: { trigger: '.stats-grid', start: 'top 85%' },
+});
+gsap.from('.terminal', {
+  opacity: 0, y: 48, duration: 1.3, ease: 'expo.out',
+  scrollTrigger: { trigger: '.terminal', start: 'top 80%' },
+});
+
+// Skill cols
+gsap.from('.skill-col', {
+  opacity: 0, y: 40, stagger: 0.1, duration: 1.1, ease: 'expo.out',
+  scrollTrigger: { trigger: '.skills-cols', start: 'top 80%' },
+});
+
+// Project items
+gsap.from('.proj-item', {
+  opacity: 0, x: -20, stagger: 0.08, duration: 1, ease: 'power4.out',
+  scrollTrigger: { trigger: '.proj-list', start: 'top 80%' },
+});
+
+// Contact
+gsap.from('.contact-links .contact-link', {
+  opacity: 0, x: -20, stagger: 0.12, duration: 1, ease: 'power4.out',
+  scrollTrigger: { trigger: '#contact', start: 'top 75%' },
+});
+gsap.from('.form-group', {
+  opacity: 0, y: 20, stagger: 0.08, duration: 0.9, ease: 'power4.out',
+  scrollTrigger: { trigger: '#contact', start: 'top 72%' },
+});
+
+// Nav scroll
+ScrollTrigger.create({
+  start: 'top -60',
+  onUpdate: self => {
+    const nav = document.getElementById('main-nav');
+    if (self.direction === 1) {
+      nav.style.background = 'rgba(0,0,0,0.88)';
+      nav.style.backdropFilter = 'blur(18px)';
+      nav.style.borderBottom = '1px solid rgba(60,60,60,0.4)';
+    } else {
+      nav.style.background = 'transparent';
+      nav.style.backdropFilter = 'none';
+      nav.style.borderBottom = 'none';
+    }
+  },
+});
+
+// AnimeJS: SVG accent pulses on scroll
+ScrollTrigger.create({
+  trigger: 'body', start: 'top top', end: 'bottom bottom',
+  onUpdate: self => {
+    const r = 180 + self.progress * 100;
+    document.getElementById('ac').setAttribute('r', r);
+  },
+});
+anime({ targets: '#ap1', strokeOpacity: [0.04, 0.14, 0.04], duration: 5000, easing: 'easeInOutSine', loop: true });
+
+
+/* ─────────────────────────────────────
+   CONTACT FORM — EmailJS send
+───────────────────────────────────── */
+document.getElementById('contact-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn    = document.getElementById('send-btn');
+  const label  = document.getElementById('send-label');
+  const status = document.getElementById('form-status');
+
+  btn.disabled = true;
+  label.textContent = 'sending...';
+  status.className  = 'form-status';
+  status.textContent = '';
+
+  const params = {
+    from_name: document.getElementById('cf-name').value.trim(),
+    reply_to:  document.getElementById('cf-email').value.trim(),
+    subject:   document.getElementById('cf-subject').value.trim(),
+    message:   document.getElementById('cf-msg').value.trim(),
+    to_email:  'jakadwangdu@outlook.com',
+  };
+
+  try {
+    await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, params);
+    label.textContent = 'sent_successfully()';
+    status.textContent = '// message delivered ✓';
+    status.className = 'form-status ok';
+    this.reset();
+    setTimeout(() => {
+      label.textContent = 'send_message()';
+      btn.disabled = false;
+      status.textContent = '';
+    }, 4000);
+  } catch (err) {
+    label.textContent = 'send_message()';
+    btn.disabled = false;
+    // Fallback: open mailto
+    const subject = encodeURIComponent(params.subject || 'Hello from portfolio');
+    const body    = encodeURIComponent(`Name: ${params.from_name}\nEmail: ${params.reply_to}\n\n${params.message}`);
+    status.innerHTML = `<span>// EmailJS not configured — <a href="mailto:jakadwangdu@outlook.com?subject=${subject}&body=${body}" style="color:var(--accent);text-decoration:none">click to send via email client</a></span>`;
+    status.className = 'form-status err';
+  }
+});
+
+</script>
+</body>
+</html>
